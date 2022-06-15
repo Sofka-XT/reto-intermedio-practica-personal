@@ -1,0 +1,31 @@
+version: '3.7'
+
+services:
+  frontend:
+    build:
+      context: ./web
+      args:
+        HOST_API: http://localhost:8080/api/
+    ports:
+      - 80:80
+    depends_on:
+      - backend
+  backend:
+    build: .
+    ports:
+      - 8080:8080
+    environment:
+      - SPRING_DATASOURCE_URL=mongodb+srv://localhost:27017/
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
+      - SETTINGS_CORS_ORIGIN=http://localhost
+    depends_on:
+      - db
+  db:
+    image: mongodb
+    environment:
+      - MONGO_ROOT_PASSWORD=root
+      - MONGOL_DATABASE=todo_db
+    restart: always
+    volumes: 
+      - $PWD/data:/data
